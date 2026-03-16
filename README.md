@@ -2,8 +2,8 @@
 
 > WSL/Linux 自动化装机脚本 | Enterprise DevOps Edition
 
-[![Version](https://img.shields.io/badge/version-v1.0.13-blue)](https://github.com/yourusername/openclaw-installer)
-[![Platform](https://img.shields.io/badge/platform-Linux-green)](https://github.com/yourusername/openclaw-installer)
+[![Version](https://img.shields.io/badge/version-v1.0.13-blue)](https://github.com/YNanxing/openclaw-installer)
+[![Platform](https://img.shields.io/badge/platform-Linux-green)](https://github.com/YNanxing/openclaw-installer)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 一键自动化安装 [OpenClaw](https://github.com/openclaw/openclaw) 的 Shell 脚本，专为国内网络环境优化，支持智能镜像源切换和代理节点自动选择。
@@ -26,20 +26,20 @@
 ### 一键安装（推荐）
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/openclaw-installer/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/install.sh | bash
 ```
 
 或使用 wget：
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/yourusername/openclaw-installer/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/install.sh | bash
 ```
 
 ### 手动下载安装
 
 ```bash
 # 下载脚本
-curl -fsSL -o install.sh https://raw.githubusercontent.com/yourusername/openclaw-installer/main/install.sh
+curl -fsSL -o install.sh https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/install.sh
 
 # 赋予执行权限
 chmod +x install.sh
