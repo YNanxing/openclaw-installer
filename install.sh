@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 # ==============================================================================
 # 🚀 OpenClaw WSL/Debian/Ubuntu 自动化装机 (Enterprise DevOps Edition V1.0.13)
+# Github：https://github.com/YNanxing/openclaw-installer
+# 欢迎提交 Issue 和 PR！
 # ==============================================================================
 
 set -euEo pipefail
