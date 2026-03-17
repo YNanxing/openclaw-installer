@@ -26,11 +26,10 @@
 ### 一键安装（推荐）
 
 ```bash
-# 国外环境
 curl -fsSL https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/install.sh | bash
 ```
 
-国内环境：
+Gitee 国内环境：
 
 ```bash
 curl -fsSL https://gitee.com/s1/openclaw-installer/main/raw/install.sh | bash
