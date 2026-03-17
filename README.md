@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/in
 Gitee 国内环境：
 
 ```bash
-curl -fsSL https://gitee.com/s1/openclaw-installer/main/raw/install.sh | bash
+curl -fsSL https://gitee.com/s1/openclaw-installer/raw/main/install.sh | bash
 ```
 
 或使用 wget：
