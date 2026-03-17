@@ -42,8 +42,8 @@ readonly GIT_PROXY_MIRRORS=(
 
 # FNM 二进制包下载代理前缀池
 readonly FNM_MIRROR_PREFIXES=(
-    "https://gh-proxy.com/"
     "https://ghfast.top/"
+    "https://gh-proxy.com/"
     "https://githubproxy.cc/"
     "https://ghps.cc/"
     "https://kkgithub.com/"
@@ -220,7 +220,7 @@ show_cleanup_guide() {
         "FNM_SETUP")
             printf '     %s⚠ 清理 FNM 及 Node 环境:%s\n' "${C_YELLOW}" "${C_RESET}"
             printf '       rm -rf ~/.local/share/fnm ~/.fnm\n'
-            printf '       sed -i "/# === OpenClaw FNM START ===/,/# === OpenClaw FNM END ===/d" ~/.bashrc ~/.zshrc\n' ;;
+            printf '       sed -i "/# === OpenClaw FNM START ===/,/# === OpenClaw FNM END ===/d" ~/.bashrc\n' ;;
         "OPENCLAW_SETUP")
             printf '     %s⚠ 清理 OpenClaw 残留:%s\n' "${C_YELLOW}" "${C_RESET}"
             printf '       npm uninstall -g openclaw\n'
@@ -296,7 +296,7 @@ get_fastest() {
     best=$(
         printf '%s\n' "${urls[@]}" | \
         xargs -d '\n' -P 8 -n 1 sh -c 'curl -s -m 4 -o /dev/null -w "%{http_code}\t%{time_starttransfer}\t%{url_effective}\n" "$1"' _ | \
-        awk -F'\t' '/^200/ && $2>0 {print $2, $3}' | sort -n | head -1 | awk '{print $2}'
+        awk -F'\t' '/^[234]/ && $2>0 {print $2, $3}' | sort -n | head -1 | awk '{print $2}'
     ) || true
     
     if [[ -n "$best" ]]; then printf '%s\n' "$best"; return 0; else return 1; fi
@@ -366,6 +366,7 @@ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${codename}-security main restri
 
     local missing=()
     if ! command -v curl >/dev/null 2>&1; then missing+=("curl"); fi
+    if ! command -v git >/dev/null 2>&1; then missing+=("git"); fi
     if ! dpkg -s polkitd >/dev/null 2>&1 && ! dpkg -s policykit-1 >/dev/null 2>&1; then
         if [[ "${distro_id}" == "ubuntu" ]] && [[ "${codename}" == "focal" || "${codename}" == "bionic" ]]; then missing+=("policykit-1")
         elif [[ "${distro_id}" == "debian" ]] && [[ "${codename}" == "bullseye" || "${codename}" == "buster" ]]; then missing+=("policykit-1")
@@ -382,24 +383,33 @@ deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu/ ${codename}-security main restri
 }
 
 setup_git_mirrors() {
-    log_info "配置 Git 代理网络与克隆重定向..."
-    
-    git config --global --unset-all "url.https://gh-proxy.com/.insteadOf" 2>/dev/null || true
+    mark_stage "GIT_SETUP"
+    log_step "2/${TOTAL_STEPS}" "配置 Git 代理与克隆重定向"
+    log_info "正在测速并配置最快的 Git 代理镜像..."
+
+    # 使用 get_fastest 动态测速，如果全部超时则使用兜底源
+    local best_git
+    best_git="$(get_fastest "${GIT_PROXY_MIRRORS[@]}" || echo "")"
+    best_git="${best_git:-https://ghfast.top/https://github.com/}"
+
+    log_info "已选定最优 Git 代理: ${C_GREEN}${best_git}${C_RESET}"
+
     for old in "${GIT_PROXY_MIRRORS[@]:-}"; do 
-        git config --global --unset-all "url.${old}.insteadOf" 2>/dev/null || true
+        git config --global --remove-section "url.${old}" 2>/dev/null || true
     done
-    git config --global --unset-all "url.https://gh-proxy.com/https://github.com/.insteadOf" 2>/dev/null || true
+    
+    git config --global --add url."${best_git}".insteadOf "https://github.com/"
     git config --global url."https://github.com/".insteadOf "git@github.com:"
     git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
     git config --global url."https://github.com/".insteadOf "git://github.com/"
-    
-    git config --global --add "url.https://gh-proxy.com/https://github.com/.insteadOf" "https://github.com/"
+
     if [[ -n "${http_proxy:-}" ]]; then 
         git config --global http.proxy "${http_proxy}"
     fi
     if [[ -n "${https_proxy:-}" ]]; then 
         git config --global https.proxy "${https_proxy}"
     fi
+    log_success "Git 代理与克隆重定向设置完成"
 }
 
 setup_apt_mirror_and_deps() {
@@ -408,7 +418,7 @@ setup_apt_mirror_and_deps() {
 
     timedatectl set-timezone Asia/Shanghai 2>/dev/null || true
     local -a deps=(
-        git ca-certificates jq unzip
+        ca-certificates jq unzip
         build-essential cmake pkg-config libssl-dev gcc g++ make gnupg
         sqlite3 libsqlite3-dev python3 python3-venv ffmpeg
     )
@@ -548,9 +558,9 @@ setup_openclaw() {
     npm config set registry "${best_npm}" || { log_error "NPM 镜像源设置失败"; exit 1; }
     log_success "NPM 镜像源已切换至: ${best_npm}"
 
-    setup_git_mirrors
+    # setup_git_mirrors
 
-    log_info "正在通过 NPM 安装 OpenClaw (可能需要数分钟，请耐心等待)..."
+    log_info "正在通过 NPM 安装 OpenClaw (可能需要10-20分钟，请耐心等待)..."
     if ! run_task npm install -g openclaw@latest; then
         log_warn "首次安装失败，清理缓存后尝试重新安装..."
         sleep 5
@@ -692,6 +702,7 @@ main() {
 
     ensure_sudo
     check_required_tools
+    setup_git_mirrors
     setup_apt_mirror_and_deps
     setup_fnm_node
     setup_openclaw
