@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/in
 国内环境：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yourusername/openclaw-installer/main/install.sh | bash
+curl -fsSL https://gitee.com/s1/openclaw-installer/main/raw/install.sh | bash
 ```
 
 或使用 wget：
