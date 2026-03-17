@@ -26,7 +26,14 @@
 ### 一键安装（推荐）
 
 ```bash
+# 国外环境
 curl -fsSL https://raw.githubusercontent.com/YNanxing/openclaw-installer/main/install.sh | bash
+```
+
+国内环境：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yourusername/openclaw-installer/main/install.sh | bash
 ```
 
 或使用 wget：
