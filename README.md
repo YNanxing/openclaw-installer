@@ -2,7 +2,7 @@
 
 > WSL/Linux 自动化装机脚本 | Enterprise DevOps Edition
 
-[![Version](https://img.shields.io/badge/version-v1.0.13-blue)](https://github.com/YNanxing/openclaw-installer)
+[![Version](https://img.shields.io/badge/version-v1.1.0-blue)](https://github.com/YNanxing/openclaw-installer)
 [![Platform](https://img.shields.io/badge/platform-Linux-green)](https://github.com/YNanxing/openclaw-installer)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
