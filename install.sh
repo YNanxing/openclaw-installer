@@ -523,7 +523,7 @@ eval "$(fnm env 2>/dev/null)" 2>/dev/null || true
     done
 
     log_info "正在安装 Node.js v${NODE_VERSION}..."
-    run_task fnm install "${NODE_VERSION}" --node-dist-mirror="https://npmmirror.com/mirrors/node/" || { log_error "Node.js 安装失败"; exit 1; }
+    run_task fnm install "${NODE_VERSION}" || { log_error "Node.js 安装失败"; exit 1; }
     run_task fnm default "${NODE_VERSION}" || { log_error "Node.js 默认版本设置失败"; exit 1; }
     run_task fnm use "${NODE_VERSION}" || { log_error "Node.js 版本切换失败"; exit 1; }
 
@@ -628,7 +628,7 @@ finalize_and_onboard() {
     
     local exit_code=0
     # 由于该命令可能具备向用户打点询问的界面交互，所以不能裹入暗箱进程组
-    if ! openclaw onboard --install-daemon >&3 2>&4 </dev/tty; then
+    if ! openclaw onboard --install-daemon </dev/tty >/dev/tty 2>/dev/tty; then
         exit_code=$?
     fi
     if [[ $exit_code -eq 0 ]]; then
