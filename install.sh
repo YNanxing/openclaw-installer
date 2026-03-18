@@ -523,7 +523,7 @@ eval "$(fnm env 2>/dev/null)" 2>/dev/null || true
     done
 
     log_info "正在安装 Node.js v${NODE_VERSION}..."
-    run_task fnm install "${NODE_VERSION}" || { log_error "Node.js 安装失败"; exit 1; }
+    run_task fnm install "${NODE_VERSION}" --node-dist-mirror="https://npmmirror.com/mirrors/node/" || { log_error "Node.js 安装失败"; exit 1; }
     run_task fnm default "${NODE_VERSION}" || { log_error "Node.js 默认版本设置失败"; exit 1; }
     run_task fnm use "${NODE_VERSION}" || { log_error "Node.js 版本切换失败"; exit 1; }
 
