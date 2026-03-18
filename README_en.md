@@ -159,7 +159,7 @@ If the installation is interrupted, the script provides targeted cleanup guideli
 
 ## 📜 Changelog
 
-### v1.0.13 (2026-03-16)
+### v1.1.0 (2026-03-16)
 - Optimized FNM download node selection logic.
 - Enhanced error handling and interrupt recovery mechanisms.
 - Improved terminal color output compatibility.
