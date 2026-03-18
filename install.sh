@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 # ==============================================================================
-# 🚀 OpenClaw WSL/Debian/Ubuntu 自动化装机 (Enterprise DevOps Edition V1.0.13)
+# 🚀 OpenClaw WSL/Debian/Ubuntu 自动化装机 (Enterprise DevOps Edition V1.1.0)
 # Github：https://github.com/YNanxing/openclaw-installer
 # 欢迎提交 Issue 和 PR！
 # ==============================================================================
@@ -628,8 +628,9 @@ finalize_and_onboard() {
     
     local exit_code=0
     # 由于该命令可能具备向用户打点询问的界面交互，所以不能裹入暗箱进程组
-    if ! openclaw onboard --install-daemon; then exit_code=$?; fi
-    
+    if ! openclaw onboard --install-daemon >&3 2>&4 </dev/tty; then
+        exit_code=$?
+    fi
     if [[ $exit_code -eq 0 ]]; then
         log_success "配置向导执行完成"
     else
@@ -645,11 +646,11 @@ show_final_info() {
     printf '\n'
     if [[ "${G_ONBOARD_SUCCESS}" == "true" ]]; then
         printf '  %s%s╭──────────────────────────────────────────────────────────╮%s\n' "${C_GREEN}" "${C_BOLD}" "${C_RESET}"
-        printf '  %s%s│  🎉  OpenClaw 安装与配置全部完成！                         │%s\n' "${C_GREEN}" "${C_BOLD}" "${C_RESET}"
+        printf '  %s%s│  🎉  OpenClaw 安装与配置全部完成！                       │%s\n' "${C_GREEN}" "${C_BOLD}" "${C_RESET}"
         printf '  %s%s╰──────────────────────────────────────────────────────────╯%s\n' "${C_GREEN}" "${C_BOLD}" "${C_RESET}"
     else
         printf '  %s%s╭──────────────────────────────────────────────────────────╮%s\n' "${C_YELLOW}" "${C_BOLD}" "${C_RESET}"
-        printf '  %s%s│  ⚠  核心组件已安装，部分配置向导需手动完成。               │%s\n' "${C_YELLOW}" "${C_BOLD}" "${C_RESET}"
+        printf '  %s%s│  ⚠  核心组件已安装，部分配置向导需手动完成。             │%s\n' "${C_YELLOW}" "${C_BOLD}" "${C_RESET}"
         printf '  %s%s╰──────────────────────────────────────────────────────────╯%s\n' "${C_YELLOW}" "${C_BOLD}" "${C_RESET}"
     fi
 
@@ -659,6 +660,10 @@ show_final_info() {
     printf '    %sopenclaw logs --follow%s            %s# 实时查看后台运行日志%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
     printf '    %sopenclaw doctor%s                   %s# 诊断运行环境与健康状态%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
     printf '    %sopenclaw onboard --install-daemon%s %s# 重新执行服务启动配置%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
+    printf '\n'
+    printf '    %sGithub (欢迎Star):%s %shttps://github.com/YNanxing/openclaw-installer%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
+    printf '    %sGitee (欢迎Star):%s %shttps://gitee.com/s1/openclaw-installer%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
+    printf '    %s全网同名 ID:%s %s智绘影视%s\n' "${C_GREEN}" "${C_RESET}" "${C_DIM}" "${C_RESET}"
     printf '\n'
 }
 
@@ -676,7 +681,7 @@ main() {
     prevent_root_execution
 
     printf '  %s%s╭────────────────────────────────────────────────────────────╮%s\n' "${C_BLUE}" "${C_BOLD}" "${C_RESET}"
-    printf '  %s%s│   %s🦞 OpenClaw WSL/Debian/Ubuntu 自动集成安装脚本 V1.0.13 %s      %s│%s\n' "${C_BLUE}" "${C_BOLD}" "${C_CYAN}" "${C_RESET}" "${C_BLUE}${C_BOLD}" "${C_RESET}"
+    printf '  %s%s│   %s🦞 OpenClaw 自动集成安装脚本 V1.1.0                  %s    %s│%s\n' "${C_BLUE}" "${C_BOLD}" "${C_CYAN}" "${C_RESET}" "${C_BLUE}${C_BOLD}" "${C_RESET}"
     printf '  %s%s╰────────────────────────────────────────────────────────────╯%s\n\n' "${C_BLUE}" "${C_BOLD}" "${C_RESET}"
 
     if command -v openclaw >/dev/null 2>&1 && command -v node >/dev/null 2>&1; then
@@ -691,6 +696,7 @@ main() {
         fi
     fi
 
+    exec 3>&1 4>&2 
     G_LOG_DIR=$(mktemp -d -t openclaw_install.XXXXXX)
     G_LOG_PIPE="${G_LOG_DIR}/openclaw_install.fifo"
     mkfifo "${G_LOG_PIPE}"
